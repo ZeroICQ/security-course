@@ -4,6 +4,7 @@
 #pragma warning(disable:4127)   // conditional expression is constant
 #pragma warning(disable:4054)   // cast of function pointer to PVOID
 #pragma warning(disable:4244)   // conversion from 'int' to 'BOOLEAN', possible loss of data
+#pragma warning(disable:4700)
 
 #include <ndis.h>
 #include "passthru.h"

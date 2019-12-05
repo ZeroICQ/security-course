@@ -1,5 +1,11 @@
 ﻿#include "precomp.h"
 
+
+typedef struct _GDATA {
+    NDIS_HANDLE NdisDeviceHandle;
+    NDIS_HANDLE ProtHandle;
+} GDATA, * PGDATA;
+
 NTSTATUS DriverEntry(
     IN PDRIVER_OBJECT DriverObject,
     IN PUNICODE_STRING RegistryPath
@@ -20,6 +26,8 @@ Return Value:
     PNDIS_CONFIGURATION_PARAMETER Param;
 
     NDIS_HANDLE DriverHandle = NULL;
+    NDIS_HANDLE ProtHandle = NULL;
+    GDATA GlobalData;
 
     NDIS_STRING Name;
     NDIS_HANDLE WrapperHandle;
@@ -113,10 +121,10 @@ Return Value:
 
     // Name of control deviceObject.
     // DeviceName that names the device object.
-    NdisInitUnicodeString(&ntDeviceName, L"\Device\passthru");
+    NdisInitUnicodeString(&ntDeviceName, L"\\Device\\passthru");
 
     // SymbolicName that is the Win32-visible name of the device
-    NdisInitUnicodeString(&win32DeviceName, L"\DosDevices\passthru");
+    NdisInitUnicodeString(&win32DeviceName, L"\\DosDevices\\passthru");
     //Создаем строку имени
 
     NdisZeroMemory(MajorFunctions, sizeof(MajorFunctions));

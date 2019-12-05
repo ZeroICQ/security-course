@@ -198,6 +198,11 @@ PtPNPHandler(
     IN PNET_PNP_EVENT             pNetPnPEvent
 );
 
+VOID
+PtUnload(
+    IN PDRIVER_OBJECT             DriverObject
+);
+
 //
 // Structure used by both the miniport as well as the protocol part of the intermediate driver
 // to represent an adapter and its corres. lower bindings

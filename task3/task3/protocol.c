@@ -84,7 +84,7 @@ PtReceive(
             //Эта часть работает при наличии второго адаптера :)
             if (pAdapt->Next)
             {
-                DBGPRINT("PASSTHRU GETTING RECIEVES ON SECONDARYn");
+                //DBGPRINT("PASSTHRU GETTING RECIEVES ON SECONDARYn");
                 ASSERT(0);
             }
 
@@ -121,17 +121,17 @@ PtReceive(
             case NdisMedium802_3:
 
                 NdisMEthIndicateReceive(pAdapt->MiniportHandle, MacReceiveContext, HeaderBuffer,
-                    HeaderBufferSize, LookAheadBuffer, LookAheadBufferSize, PacketSize);
+                    HeaderBufferSize, LookAheadBuffer, LookaheadBufferSize, PacketSize);
                 break;
 
             case NdisMedium802_5:
                 NdisMTrIndicateReceive(pAdapt->MiniportHandle, MacReceiveContext, HeaderBuffer,
-                    HeaderBufferSize, LookAheadBuffer, LookAheadBufferSize, PacketSize);
+                    HeaderBufferSize, LookAheadBuffer, LookaheadBufferSize, PacketSize);
                 break;
 
-            case NdisMediumFddi:
-                NdisMFddiIndicateReceive(pAdapt->MiniportHandle, MacReceiveContext, HeaderBuffer,
-                    HeaderBufferSize, LookAheadBuffer, LookAheadBufferSize, PacketSize);
+            //case NdisMediumFddi:
+            //    NdisMFddiIndicateReceive(pAdapt->MiniportHandle, MacReceiveContext, HeaderBuffer,
+            //        HeaderBufferSize, LookAheadBuffer, LookaheadBufferSize, PacketSize);
                 break;
 
             default:
@@ -195,4 +195,10 @@ PtPNPHandler(
 {
     return NDIS_STATUS_SUCCESS;
 }
+
+VOID
+PtUnload(
+    IN PDRIVER_OBJECT             DriverObject
+    ) {}
+
 

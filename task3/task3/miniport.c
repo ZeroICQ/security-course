@@ -41,11 +41,11 @@ MPSend(
     ASSERT(pAdapt->Next);
     pAdapt = pAdapt->Next;
 
-    //Проверка наличия второго сетевого адаптера. Вверху я говорил, что его наличие необходимо предусматривать.
-    if (IsIMDeviceStateOn(pAdapt) == FALSE)
-    {
-        return NDIS_STATUS_FAILURE;
-    }
+    ////Проверка наличия второго сетевого адаптера. Вверху я говорил, что его наличие необходимо предусматривать.
+    //if (IsIMDeviceStateOn(pAdapt) == FALSE)
+    //{
+    //    return NDIS_STATUS_FAILURE;
+    //}
 
     //Проверка наличия и состояния.
     NdisAllocatePacket(&Status, &MyPacket, pAdapt->SendPacketPoolHandle);

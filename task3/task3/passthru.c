@@ -1,5 +1,5 @@
 ﻿#include "precomp.h"
-
+#include "ntddk.h"
 
 typedef struct _GDATA {
     NDIS_HANDLE NdisDeviceHandle;
@@ -20,6 +20,7 @@ Return Value:
 
 --*/
 {
+
     NDIS_STATUS Status;
     NDIS_PROTOCOL_CHARACTERISTICS PChars;
     NDIS_MINIPORT_CHARACTERISTICS MChars;

@@ -67,6 +67,8 @@ PtReceive(
     IN UINT                       PacketSize
     )
 {
+   //DbgPrint("RCV");
+
     PADAPT pAdapt = (PADAPT)ProtocolBindingContext;
 
     //Контекст адаптера
@@ -84,7 +86,7 @@ PtReceive(
             //Эта часть работает при наличии второго адаптера :)
             if (pAdapt->Next)
             {
-                //DBGPRINT("PASSTHRU GETTING RECIEVES ON SECONDARYn");
+                //DbgPrint("PASSTHRU GETTING RECIEVES ON SECONDARY\n");
                 ASSERT(0);
             }
 

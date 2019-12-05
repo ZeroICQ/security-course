@@ -6,6 +6,7 @@
 #pragma warning(disable:4244)   // conversion from 'int' to 'BOOLEAN', possible loss of data
 #pragma warning(disable:4700)
 
+#include <ntddk.h>
 #include <ndis.h>
 #include "passthru.h"
 

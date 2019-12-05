@@ -32,5 +32,8 @@ TARGETLIBS=$(DDK_LIB_PATH)\ndis.lib
 INCLUDES=
 
 SOURCES=\
-    passthru.c
+    miniport.c \
+    passthru.c \
+    passthru.rc \
+    protocol.c
 

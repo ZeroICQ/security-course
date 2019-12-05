@@ -83,6 +83,120 @@ MPReset(
     IN  NDIS_HANDLE MiniportAdapterContext
 );
 
+//
+// Protocol proto-types
+//
+extern
+VOID
+PtOpenAdapterComplete(
+    IN NDIS_HANDLE                ProtocolBindingContext,
+    IN NDIS_STATUS                Status,
+    IN NDIS_STATUS                OpenErrorStatus
+);
+
+extern
+VOID
+PtCloseAdapterComplete(
+    IN NDIS_HANDLE                ProtocolBindingContext,
+    IN NDIS_STATUS                Status
+);
+
+extern
+VOID
+PtSendComplete(
+    IN NDIS_HANDLE                ProtocolBindingContext,
+    IN PNDIS_PACKET               Packet,
+    IN NDIS_STATUS                Status
+);
+
+extern
+VOID
+PtTransferDataComplete(
+    IN NDIS_HANDLE                ProtocolBindingContext,
+    IN PNDIS_PACKET               Packet,
+    IN NDIS_STATUS                Status,
+    IN UINT                       BytesTransferred
+);
+
+extern
+VOID
+PtResetComplete(
+    IN NDIS_HANDLE                ProtocolBindingContext,
+    IN NDIS_STATUS                Status
+);
+
+extern
+VOID
+PtRequestComplete(
+    IN NDIS_HANDLE                ProtocolBindingContext,
+    IN PNDIS_REQUEST              NdisRequest,
+    IN NDIS_STATUS                Status
+);
+
+extern
+NDIS_STATUS
+PtReceive(
+    IN NDIS_HANDLE                ProtocolBindingContext,
+    IN NDIS_HANDLE                MacReceiveContext,
+    IN PVOID                      HeaderBuffer,
+    IN UINT                       HeaderBufferSize,
+    IN PVOID                      LookAheadBuffer,
+    IN UINT                       LookaheadBufferSize,
+    IN UINT                       PacketSize
+);
+
+extern
+VOID
+PtReceiveComplete(
+    IN NDIS_HANDLE                ProtocolBindingContext
+);
+
+extern
+VOID
+PtStatus(
+    IN NDIS_HANDLE                ProtocolBindingContext,
+    IN NDIS_STATUS                GeneralStatus,
+    IN PVOID                      StatusBuffer,
+    IN UINT                       StatusBufferSize
+);
+
+extern
+VOID
+PtStatusComplete(
+    IN NDIS_HANDLE                ProtocolBindingContext
+);
+
+extern
+VOID
+PtBindAdapter(
+    OUT PNDIS_STATUS              Status,
+    IN  NDIS_HANDLE               BindContext,
+    IN  PNDIS_STRING              DeviceName,
+    IN  PVOID                     SystemSpecific1,
+    IN  PVOID                     SystemSpecific2
+);
+
+extern
+VOID
+PtUnbindAdapter(
+    OUT PNDIS_STATUS              Status,
+    IN  NDIS_HANDLE               ProtocolBindingContext,
+    IN  NDIS_HANDLE               UnbindContext
+);
+
+extern
+INT
+PtReceivePacket(
+    IN NDIS_HANDLE                ProtocolBindingContext,
+    IN PNDIS_PACKET               Packet
+);
+
+extern
+NDIS_STATUS
+PtPNPHandler(
+    IN NDIS_HANDLE                ProtocolBindingContext,
+    IN PNET_PNP_EVENT             pNetPnPEvent
+);
 
 //
 // Structure used by both the miniport as well as the protocol part of the intermediate driver
@@ -105,7 +219,7 @@ typedef struct _ADAPT
     PULONG                         BytesNeeded;
     PULONG                         BytesReadOrWritten;
     BOOLEAN                        ReceivedIndicationFlags[32];
-
+    BOOLEAN                        IndicateRcvComplete;
     BOOLEAN                        OutstandingRequests;      // TRUE iff a request is pending
                                                         // at the miniport below
     BOOLEAN                        QueuedRequest;            // TRUE iff a request is queued at

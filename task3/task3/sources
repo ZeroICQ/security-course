@@ -33,5 +33,6 @@ INCLUDES=
 
 SOURCES=\
     passthru.c \
-    miniport.c
+    miniport.c \
+    protocol.c
 

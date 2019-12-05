@@ -158,23 +158,98 @@ Return Value:
 
 NTSTATUS FilterOpen(IN PDEVICE_OBJECT DeviceObject, IN PIRP Irp)
 {
-    return NDIS_STATUS_SUCCESS;
+    // инициализация любых управляющих параметров, например структуры управляющих данных
+
+    // Возращаемое значение - ошибка или нормальное.
+    // При нормальном завершении - будет передан HANDLE на устройство, в нашем случае на драйвер.
+    Irp->IoStatus.Status = NDIS_STATUS_SUCCESS;
+    // Количество переданных вверх байт - в нашем случае 0 потому как нет передаваемых параметров.
+    Irp->IoStatus.Information = 0;
+    // Завершение работы.
+    IoCompleteRequest( Irp, IO_NO_INCREMENT );
+    return NDIS_STATUS_SUCCESS; // Нормальный код возврата.
 }
 
 NTSTATUS FilterClose(IN PDEVICE_OBJECT DeviceObject, IN PIRP Irp)
 {
+    // Код окончания работы с драйвером.
+
+    Irp->IoStatus.Status = NDIS_STATUS_SUCCESS;
+    Irp->IoStatus.Information = 0;
+    IoCompleteRequest(Irp, IO_NO_INCREMENT);
     return NDIS_STATUS_SUCCESS;
 }
 
+unsigned char TestStr[10] = "abcdefghi";
+
 NTSTATUS FilterRead(IN PDEVICE_OBJECT DeviceObject, IN PIRP Irp)
 {
-    return NDIS_STATUS_SUCCESS;
+    NDIS_STATUS Status = NDIS_STATUS_SUCCESS;
+    ULONG BytesReturned = 0;
+
+    ////////////////////////////////////////////////////////////////////////
+    // Get input parameters
+    PIO_STACK_LOCATION IrpStack = IoGetCurrentIrpStackLocation(Irp); // Содержит стек Irp
+    // Длина принятых данных -равна параметру максимально запрошенной длины в функции ReadFile
+    ULONG BytesRequested = IrpStack->Parameters.Read.Length;
+
+    if (BytesRequested < 10) // Если запрошено меньше нашей тестовой длины - вернуть ошибку
+    {
+        BytesReturned = 0;
+        Status = STATUS_INVALID_BUFFER_SIZE;
+    }
+        else
+        {
+        // Если все в порядке - копировать буфер в выходной буфер стека.
+        NdisMoveMemory(Irp->AssociatedIrp.SystemBuffer, TestStr, 10);
+        BytesReturned = 10;
+        Status = NDIS_STATUS_SUCCESS;
+        }
+
+        // Отправить
+        Irp->IoStatus.Status = Status;
+        Irp->IoStatus.Information = BytesReturned;
+        IoCompleteRequest(Irp, IO_NO_INCREMENT);
+        return Status;
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+
 NTSTATUS FilterWrite(IN PDEVICE_OBJECT DeviceObject, IN PIRP Irp)
 {
-    return NDIS_STATUS_SUCCESS;
+    NDIS_STATUS Status = NDIS_STATUS_SUCCESS;
+    ULONG BytesReturned = 0;
+
+    // Здесь все работает аналогично.
+
+    Irp->IoStatus.Status = Status;
+    Irp->IoStatus.Information = BytesReturned;
+    IoCompleteRequest(Irp, IO_NO_INCREMENT);
+    return Status;
 }
+
+#define IOCTL_SET_COMMAND1 CTL_CODE(FILE_DEVICE_UNKNOWN, 0xF07, METHOD_BUFFERED, FILE_ANY_ACCESS)
+
 NTSTATUS FilterIoControl(IN PDEVICE_OBJECT DeviceObject, IN PIRP Irp)
 {
-    return NDIS_STATUS_SUCCESS;
+    NDIS_STATUS Status = NDIS_STATUS_SUCCESS;
+    ULONG BytesReturned = 0;
+    PIO_STACK_LOCATION IrpStack = IoGetCurrentIrpStackLocation(Irp);
+    ULONG IoControlCode = IrpStack->Parameters.DeviceIoControl.IoControlCode;
+
+    PVOID InfoBuffer = Irp->AssociatedIrp.SystemBuffer;
+    ULONG InputBufferLen = IrpStack->Parameters.DeviceIoControl.InputBufferLength;
+    ULONG OutputBufferLen = IrpStack->Parameters.DeviceIoControl.OutputBufferLength;
+
+    switch (IoControlCode)
+    {
+    case IOCTL_SET_COMMAND1:
+        // Здесь мы можем сменить наш номер порта с 80 на, к примеру, 25.
+        break;
+    }
+
+    Irp->IoStatus.Status = Status;
+    Irp->IoStatus.Information = BytesReturned;
+    IoCompleteRequest(Irp, IO_NO_INCREMENT);
+    return Status;
 }

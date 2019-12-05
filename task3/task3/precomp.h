@@ -1,4 +1,4 @@
-#pragma warning(disable:4214)   // bit field types other than int
+﻿#pragma warning(disable:4214)   // bit field types other than int
 #pragma warning(disable:4201)   // nameless struct/union
 #pragma warning(disable:4115)   // named type definition in parentheses
 #pragma warning(disable:4127)   // conditional expression is constant

@@ -1,4 +1,4 @@
-#include "precomp.h"
+п»ї#include "precomp.h"
 
 NTSTATUS DriverEntry(
     IN PDRIVER_OBJECT DriverObject,
@@ -19,14 +19,16 @@ Return Value:
     NDIS_MINIPORT_CHARACTERISTICS MChars;
     PNDIS_CONFIGURATION_PARAMETER Param;
 
+    NDIS_HANDLE DriverHandle = NULL;
+
     NDIS_STRING Name;
     NDIS_HANDLE WrapperHandle;
-    // Этот массив будет содержать все указатели функций для регистрации.
+    // Р­С‚РѕС‚ РјР°СЃСЃРёРІ Р±СѓРґРµС‚ СЃРѕРґРµСЂР¶Р°С‚СЊ РІСЃРµ СѓРєР°Р·Р°С‚РµР»Рё С„СѓРЅРєС†РёР№ РґР»СЏ СЂРµРіРёСЃС‚СЂР°С†РёРё.
     PDRIVER_DISPATCH MajorFunctions[IRP_MJ_MAXIMUM_FUNCTION + 1];
 
-    NDIS_STRING ntDeviceName; //имя для вызова виртуального device-а для NT
-    NDIS_STRING win32DeviceName; // тоже для win32
-    PDEVICE_OBJECT deviceObject; // и объект.
+    NDIS_STRING ntDeviceName; //РёРјСЏ РґР»СЏ РІС‹Р·РѕРІР° РІРёСЂС‚СѓР°Р»СЊРЅРѕРіРѕ device-Р° РґР»СЏ NT
+    NDIS_STRING win32DeviceName; // С‚РѕР¶Рµ РґР»СЏ win32
+    PDEVICE_OBJECT deviceObject; // Рё РѕР±СЉРµРєС‚.
 
     //
     // Register the miniport with NDIS. Note that it is the miniport
@@ -36,10 +38,10 @@ Return Value:
     // start driver instances.
     //
 
-    // функция указывает системе NDIS, что пришло время инициировать miniport service в ее системе.
-    // Возвращаемое значение необходимо сохранить на будущее.
-    // Обязательно надо обратить внимание, что если происходит ошибка при инициализации любого объекта, 
-    // то при уже нормально отработавшей функции NdisMInitializeWrapper нужно вызвать NdisTerminateWrapper для высвобождения ресурса.
+    // С„СѓРЅРєС†РёСЏ СѓРєР°Р·С‹РІР°РµС‚ СЃРёСЃС‚РµРјРµ NDIS, С‡С‚Рѕ РїСЂРёС€Р»Рѕ РІСЂРµРјСЏ РёРЅРёС†РёРёСЂРѕРІР°С‚СЊ miniport service РІ РµРµ СЃРёСЃС‚РµРјРµ.
+    // Р’РѕР·РІСЂР°С‰Р°РµРјРѕРµ Р·РЅР°С‡РµРЅРёРµ РЅРµРѕР±С…РѕРґРёРјРѕ СЃРѕС…СЂР°РЅРёС‚СЊ РЅР° Р±СѓРґСѓС‰РµРµ.
+    // РћР±СЏР·Р°С‚РµР»СЊРЅРѕ РЅР°РґРѕ РѕР±СЂР°С‚РёС‚СЊ РІРЅРёРјР°РЅРёРµ, С‡С‚Рѕ РµСЃР»Рё РїСЂРѕРёСЃС…РѕРґРёС‚ РѕС€РёР±РєР° РїСЂРё РёРЅРёС†РёР°Р»РёР·Р°С†РёРё Р»СЋР±РѕРіРѕ РѕР±СЉРµРєС‚Р°, 
+    // С‚Рѕ РїСЂРё СѓР¶Рµ РЅРѕСЂРјР°Р»СЊРЅРѕ РѕС‚СЂР°Р±РѕС‚Р°РІС€РµР№ С„СѓРЅРєС†РёРё NdisMInitializeWrapper РЅСѓР¶РЅРѕ РІС‹Р·РІР°С‚СЊ NdisTerminateWrapper РґР»СЏ РІС‹СЃРІРѕР±РѕР¶РґРµРЅРёСЏ СЂРµСЃСѓСЂСЃР°.
     NdisMInitializeWrapper(&WrapperHandle, DriverObject, RegistryPath, NULL);
     // function fills a block of memory with zeros.
     NdisZeroMemory(&MChars, sizeof(NDIS_MINIPORT_CHARACTERISTICS));
@@ -67,10 +69,10 @@ Return Value:
     // If SendPackets handler is specified, SendHandler is ignored
     //
     // MChars.SendPacketsHandler = MPSendPackets;
-    // Функция, регистрирующая все функции уровня miniport
+    // Р¤СѓРЅРєС†РёСЏ, СЂРµРіРёСЃС‚СЂРёСЂСѓСЋС‰Р°СЏ РІСЃРµ С„СѓРЅРєС†РёРё СѓСЂРѕРІРЅСЏ miniport
     Status = NdisIMRegisterLayeredMiniport(WrapperHandle, &MChars, sizeof(MChars), &DriverHandle);
     ASSERT(Status == NDIS_STATUS_SUCCESS);
-    // хэдлер для правильной выгрузки функций группы miniport
+    // С…СЌРґР»РµСЂ РґР»СЏ РїСЂР°РІРёР»СЊРЅРѕР№ РІС‹РіСЂСѓР·РєРё С„СѓРЅРєС†РёР№ РіСЂСѓРїРїС‹ miniport
     NdisMRegisterUnloadHandler(WrapperHandle, PtUnload);
 
     //
@@ -104,7 +106,7 @@ Return Value:
     PChars.UnloadHandler = NULL;
     PChars.ReceivePacketHandler = PtReceivePacket;
     PChars.PnPEventHandler = PtPNPHandler;
-    // Функция, регистрирующая все функции протокола. Протокольная группа
+    // Р¤СѓРЅРєС†РёСЏ, СЂРµРіРёСЃС‚СЂРёСЂСѓСЋС‰Р°СЏ РІСЃРµ С„СѓРЅРєС†РёРё РїСЂРѕС‚РѕРєРѕР»Р°. РџСЂРѕС‚РѕРєРѕР»СЊРЅР°СЏ РіСЂСѓРїРїР°
     NdisRegisterProtocol(&Status, &ProtHandle, &PChars, sizeof(NDIS_PROTOCOL_CHARACTERISTICS));
 
     ASSERT(Status == NDIS_STATUS_SUCCESS);
@@ -115,20 +117,20 @@ Return Value:
 
     // SymbolicName that is the Win32-visible name of the device
     NdisInitUnicodeString(&win32DeviceName, L"\DosDevices\passthru");
-    //Создаем строку имени
+    //РЎРѕР·РґР°РµРј СЃС‚СЂРѕРєСѓ РёРјРµРЅРё
 
     NdisZeroMemory(MajorFunctions, sizeof(MajorFunctions));
-    //Связываем имена функций с массивом
+    //РЎРІСЏР·С‹РІР°РµРј РёРјРµРЅР° С„СѓРЅРєС†РёР№ СЃ РјР°СЃСЃРёРІРѕРј
     MajorFunctions[IRP_MJ_CREATE] = FilterOpen;
     MajorFunctions[IRP_MJ_CLOSE] = FilterClose;
     MajorFunctions[IRP_MJ_READ] = FilterRead;
     MajorFunctions[IRP_MJ_WRITE] = FilterWrite;
     MajorFunctions[IRP_MJ_DEVICE_CONTROL] = FilterIoControl;
-    //Регистрируем их
+    //Р РµРіРёСЃС‚СЂРёСЂСѓРµРј РёС…
     Status = NdisMRegisterDevice(WrapperHandle, &ntDeviceName,
         &win32DeviceName, MajorFunctions,
         &deviceObject, &GlobalData.NdisDeviceHandle);
-    // проверяем статус
+    // РїСЂРѕРІРµСЂСЏРµРј СЃС‚Р°С‚СѓСЃ
     if (Status != NDIS_STATUS_SUCCESS)
     {
         if (GlobalData.ProtHandle)
@@ -143,12 +145,12 @@ Return Value:
     }
 
     // set access method into deviceObject ( received from NdisMRegisterDevice() )
-    // объявление буферизации для связывающих операций
+    // РѕР±СЉСЏРІР»РµРЅРёРµ Р±СѓС„РµСЂРёР·Р°С†РёРё РґР»СЏ СЃРІСЏР·С‹РІР°СЋС‰РёС… РѕРїРµСЂР°С†РёР№
     deviceObject->Flags |= DO_BUFFERED_IO;
 
 
-    // Функция, информирующая NDIS о том, что есть, существует два уровня, минипорт и протокол, и говорящая об экспорте функций, если таковой присутствует.
-    // Связываем протокол и минипорт
+    // Р¤СѓРЅРєС†РёСЏ, РёРЅС„РѕСЂРјРёСЂСѓСЋС‰Р°СЏ NDIS Рѕ С‚РѕРј, С‡С‚Рѕ РµСЃС‚СЊ, СЃСѓС‰РµСЃС‚РІСѓРµС‚ РґРІР° СѓСЂРѕРІРЅСЏ, РјРёРЅРёРїРѕСЂС‚ Рё РїСЂРѕС‚РѕРєРѕР», Рё РіРѕРІРѕСЂСЏС‰Р°СЏ РѕР± СЌРєСЃРїРѕСЂС‚Рµ С„СѓРЅРєС†РёР№, РµСЃР»Рё С‚Р°РєРѕРІРѕР№ РїСЂРёСЃСѓС‚СЃС‚РІСѓРµС‚.
+    // РЎРІСЏР·С‹РІР°РµРј РїСЂРѕС‚РѕРєРѕР» Рё РјРёРЅРёРїРѕСЂС‚
     NdisIMAssociateMiniport(DriverHandle, ProtHandle);
 
     return(Status);
